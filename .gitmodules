@@ -1,6 +1,8 @@
 [submodule "external/ros2_learning"]
 	path = external/ros2_learning
 	url = https://github.com/Shrinkraln/ros2_learning.git
+	branch = master
 [submodule "external/python_learning"]
 	path = external/python_learning
 	url = https://github.com/Shrinkraln/python_learning.git
+	branch = main

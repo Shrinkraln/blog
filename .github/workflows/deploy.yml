@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # 子仓库（ros2_learning / python_learning…）push 后发来的信号，自动重建博客
+  repository_dispatch:
+    types: [content-update]
   workflow_dispatch:
 
 permissions:
