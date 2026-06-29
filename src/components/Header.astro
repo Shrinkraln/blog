@@ -1,0 +1,22 @@
+---
+import { SITE_TITLE, url } from '../consts';
+
+const path = Astro.url.pathname;
+function isActive(href: string) {
+  const full = url(href);
+  if (href === '/') return path === full || path === full + '/';
+  return path.startsWith(full);
+}
+---
+
+<header class="site-header">
+  <nav class="nav container">
+    <a class="brand" href={url('/')}>{SITE_TITLE}</a>
+    <div class="links">
+      <a href={url('/')} class={isActive('/') ? 'active' : ''}>首页</a>
+      <a href={url('/blog')} class={isActive('/blog') ? 'active' : ''}>文章</a>
+      <a href={url('/about')} class={isActive('/about') ? 'active' : ''}>关于</a>
+      <a href={url('/rss.xml')}>RSS</a>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR } from '../consts';
+---
+
+<BaseLayout title="关于" description="关于我和这个博客">
+  <article class="prose container">
+    <h1>关于</h1>
+    <p>你好，我是 {AUTHOR}。这里是我的技术笔记，记录学习编程过程中的心得、踩坑和小结。</p>
+    <h2>这个博客用什么搭的？</h2>
+    <p>
+      使用 <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 静态站点框架，
+      文章用 Markdown 写，部署在 GitHub Pages 上，完全免费。
+    </p>
+    <h2>联系我</h2>
+    <ul>
+      <li>邮箱：your@email.com</li>
+      <li>GitHub：<a href="https://github.com/" target="_blank" rel="noopener">@yourname</a></li>
+    </ul>
+  </article>
+</BaseLayout>
