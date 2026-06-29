@@ -3,9 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  # 子仓库（ros2_learning / python_learning…）push 后发来的信号，自动重建博客
+  # 子仓库（ros2_learning / python_learning…）push 后发来的信号，自动重建博客（秒级即时，需 secret）
   repository_dispatch:
     types: [content-update]
+  # 定时兜底：每 6 小时自动重建一次，拉取所有子模块最新内容。
+  # 有了它，新加的子仓库即使没配 secret，最多 6 小时内也会自动上线。
+  schedule:
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 permissions:
