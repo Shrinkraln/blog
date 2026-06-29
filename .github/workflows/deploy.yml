@@ -18,14 +18,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout（含子模块，拉取 ros2_learning / python_learning 的笔记）
+      - name: Checkout（只取顶层子模块的笔记，不递归——避免 ros2_learning 里坏掉的嵌套子模块）
         uses: actions/checkout@v4
         with:
-          submodules: recursive
-          # 同步到子模块各自的最新提交，这样每次部署都拿到最新笔记
+          submodules: true
           fetch-depth: 0
-      - name: 同步子模块到最新
-        run: git submodule update --remote --recursive
+      - name: 同步子模块到最新（非递归）
+        run: git submodule update --remote
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
