@@ -34,6 +34,11 @@ tags: ['标签']
 - `src/pages/about.astro` —— 关于页
 - `astro.config.mjs` —— 部署前把 `site` 和 `base` 改成你的 GitHub 信息
 
+## 接入新的笔记仓库
+
+把一个存放 Markdown 的 GitHub 仓库作为新主题接进博客，照
+[docs/add-content-repo.md](docs/add-content-repo.md) 一步步做即可。
+
 ## 部署到 GitHub Pages（免费）
 
 1. 在 GitHub 新建一个仓库，比如叫 `blog`。
