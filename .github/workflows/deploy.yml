@@ -1,19 +1,15 @@
 name: Deploy to GitHub Pages
 
 on:
-  # 推送到 main 分支时自动部署
   push:
     branches: [main]
-  # 也允许在 Actions 页面手动触发
   workflow_dispatch:
 
-# 允许 workflow 写入 Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 同一时间只跑一个部署
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -22,10 +18,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout（含子模块，拉取 ros2_learning / python_learning 的笔记）
         uses: actions/checkout@v4
-      - name: Install, build, and upload your site
-        uses: withastro/action@v3
+        with:
+          submodules: recursive
+          # 同步到子模块各自的最新提交，这样每次部署都拿到最新笔记
+          fetch-depth: 0
+      - name: 同步子模块到最新
+        run: git submodule update --remote --recursive
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
   deploy:
     needs: build

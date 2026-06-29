@@ -1,30 +1,59 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import { getGrouped } from '../../lib/notes';
 import { url } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const groups = await getGrouped();
 ---
 
-<BaseLayout title="全部文章" description="所有文章列表">
+<BaseLayout title="文章目录" description="按主题与系列整理的全部笔记">
   <section class="container">
-    <h1 style="margin-top:32px">全部文章</h1>
-    <ul class="post-list">
-      {
-        posts.map((post) => (
-          <li>
-            <h2><a href={url(`/blog/${post.id}/`)}>{post.data.title}</a></h2>
-            <p class="post-meta">
-              <FormattedDate date={post.data.pubDate} />
-              {post.data.tags.map((t) => <span class="tag">#{t}</span>)}
-            </p>
-            <p class="post-desc">{post.data.description}</p>
-          </li>
-        ))
-      }
-    </ul>
+    <h1 style="margin-top:32px">文章目录</h1>
+
+    {
+      groups.map((group) => (
+        <section class="cat-block" id={group.slug}>
+          <h2>{group.category}</h2>
+
+          {group.series.map((s) => (
+            <div class="series-group">
+              <h3>📚 {s.name}</h3>
+              <ol class="series-list">
+                {s.notes.map((n) => (
+                  <li>
+                    <a href={url(`/blog/${n.slug}/`)}>{n.title}</a>
+                    {n.date && (
+                      <span class="post-meta">
+                        <FormattedDate date={n.date} />
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
+
+          {group.loose.length > 0 && (
+            <ul class="post-list">
+              {group.loose.map((n) => (
+                <li>
+                  <h2 style="font-size:1.15rem">
+                    <a href={url(`/blog/${n.slug}/`)}>{n.title}</a>
+                  </h2>
+                  <p class="post-meta">
+                    {n.date && <FormattedDate date={n.date} />}
+                    {n.tags.map((t) => (
+                      <span class="tag">#{t}</span>
+                    ))}
+                  </p>
+                  {n.description && <p class="post-desc">{n.description}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))
+    }
   </section>
 </BaseLayout>

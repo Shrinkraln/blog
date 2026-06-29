@@ -1,12 +1,15 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import { getGrouped, getRecent } from '../lib/notes';
 import { SITE_DESCRIPTION, url } from '../consts';
 
-const posts = (await getCollection('blog'))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 5);
+const groups = await getGrouped();
+const recent = await getRecent(6);
+
+function countNotes(g: (typeof groups)[number]) {
+  return g.loose.length + g.series.reduce((sum, s) => sum + s.notes.length, 0);
+}
 ---
 
 <BaseLayout>
@@ -16,21 +19,37 @@ const posts = (await getCollection('blog'))
   </section>
 
   <section class="container">
-    <h2>最新文章</h2>
+    <h2>主题</h2>
+    <div class="cat-cards">
+      {
+        groups.map((g) => (
+          <a class="cat-card" href={url(`/blog#${g.slug}`)}>
+            <span class="cat-name">{g.category}</span>
+            <span class="cat-count">{countNotes(g)} 篇</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container">
+    <h2>最近更新</h2>
     <ul class="post-list">
       {
-        posts.map((post) => (
+        recent.map((n) => (
           <li>
-            <h2><a href={url(`/blog/${post.id}/`)}>{post.data.title}</a></h2>
+            <h2 style="font-size:1.15rem">
+              <a href={url(`/blog/${n.slug}/`)}>{n.title}</a>
+            </h2>
             <p class="post-meta">
-              <FormattedDate date={post.data.pubDate} />
-              {post.data.tags.map((t) => <span class="tag">#{t}</span>)}
+              <span class="tag">{n.category}</span>
+              {n.series && <span class="tag">系列 · {n.series}</span>}
+              {n.date && <FormattedDate date={n.date} />}
             </p>
-            <p class="post-desc">{post.data.description}</p>
           </li>
         ))
       }
     </ul>
-    <p style="margin-top:20px"><a href={url('/blog')}>查看全部文章 →</a></p>
+    <p style="margin-top:20px"><a href={url('/blog')}>查看全部文章目录 →</a></p>
   </section>
 </BaseLayout>

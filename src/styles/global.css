@@ -213,3 +213,86 @@ a:hover {
 .back-link {
   font-size: 0.9rem;
 }
+
+/* Topic cards (home) */
+.cat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.cat-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--fg);
+}
+.cat-card:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+.cat-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.cat-count {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Directory page */
+.cat-block {
+  margin-top: 40px;
+  scroll-margin-top: 70px;
+}
+.cat-block > h2 {
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 6px;
+}
+.series-group {
+  margin: 18px 0;
+}
+.series-group h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+.series-list {
+  margin: 0;
+  padding-left: 24px;
+}
+.series-list li {
+  padding: 4px 0;
+}
+.series-list .post-meta {
+  display: inline;
+  margin-left: 8px;
+  font-size: 0.8rem;
+}
+
+/* Series box & prev/next on a post */
+.series-box {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 16px 0 8px;
+}
+.series-box summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.series-box ol {
+  margin: 10px 0 4px;
+}
+.series-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 0.95rem;
+}

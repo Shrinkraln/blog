@@ -1,19 +1,73 @@
 ---
-import { getCollection, render } from 'astro:content';
-import PostLayout from '../../layouts/PostLayout.astro';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { getNotes, getSeriesSiblings } from '../../lib/notes';
+import { url as siteUrl } from '../../consts';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
+  const notes = await getNotes();
+  return notes.map((note) => ({
+    params: { slug: note.slug },
+    props: { note },
   }));
 }
 
-const { post } = Astro.props;
-const { Content } = await render(post);
+const { note } = Astro.props;
+const { Content } = await render(note.entry);
+
+const siblings = await getSeriesSiblings(note);
+const idx = siblings.findIndex((n) => n.slug === note.slug);
+const prev = idx > 0 ? siblings[idx - 1] : null;
+const next = idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
 ---
 
-<PostLayout post={post}>
-  <Content />
-</PostLayout>
+<BaseLayout title={note.title} description={note.description ?? note.title}>
+  <article class="prose container">
+    <a class="back-link" href={siteUrl('/blog')}>← 返回文章目录</a>
+    <p class="post-meta" style="margin-top:10px">
+      <span class="tag">{note.category}</span>
+      {note.series && <span class="tag">系列 · {note.series}</span>}
+      {note.date && <FormattedDate date={note.date} />}
+      {note.tags.map((t) => <span class="tag">#{t}</span>)}
+    </p>
+
+    {
+      note.series && siblings.length > 1 && (
+        <details class="series-box">
+          <summary>本系列共 {siblings.length} 篇</summary>
+          <ol>
+            {siblings.map((n) => (
+              <li>
+                {n.slug === note.slug ? (
+                  <strong>{n.title}（当前）</strong>
+                ) : (
+                  <a href={siteUrl(`/blog/${n.slug}/`)}>{n.title}</a>
+                )}
+              </li>
+            ))}
+          </ol>
+        </details>
+      )
+    }
+
+    <Content />
+
+    {
+      (prev || next) && (
+        <nav class="series-nav">
+          {prev ? (
+            <a href={siteUrl(`/blog/${prev.slug}/`)}>← {prev.title}</a>
+          ) : (
+            <span />
+          )}
+          {next ? (
+            <a href={siteUrl(`/blog/${next.slug}/`)}>{next.title} →</a>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>
