@@ -8,7 +8,8 @@ const notes = defineCollection({
   loader: glob({
     base: '.',
     pattern: [
-      'src/content/blog/**/*.md',
+      'src/content/blog/stm32f103c8t6/**/*.md',
+      'src/content/blog/misc/**/*.md',
       'external/ros2_learning/log/**/*.md',
       'external/python_learning/logs/**/*.md',
     ],

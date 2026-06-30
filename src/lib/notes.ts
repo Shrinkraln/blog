@@ -19,7 +19,8 @@ export interface Source {
 export const SOURCES: Source[] = [
   { dir: 'external/ros2_learning/log', category: 'ROS2', slug: 'ros2', repoRoot: 'external/ros2_learning' },
   { dir: 'external/python_learning/logs', category: 'Python', slug: 'python', repoRoot: 'external/python_learning' },
-  { dir: 'src/content/blog', category: '杂记', slug: 'misc', repoRoot: '.' },
+  { dir: 'src/content/blog/stm32f103c8t6', category: 'STM32', slug: 'stm32', repoRoot: '.' },
+  { dir: 'src/content/blog/misc', category: '杂记', slug: 'misc', repoRoot: '.' },
 ];
 
 export interface Note {
