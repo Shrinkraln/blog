@@ -1,0 +1,94 @@
+<!-- 文章标题提纲索引侧栏 -->
+<nav class="toc-sidebar" id="toc-sidebar">
+  <div class="toc-header">
+    <span class="toc-title">📑 目录</span>
+  </div>
+  <ul id="toc-list" class="toc-list"></ul>
+</nav>
+
+<script>
+  function buildTOC() {
+    const article = document.querySelector('.prose');
+    const tocSidebar = document.getElementById('toc-sidebar');
+    const tocList = document.getElementById('toc-list');
+    if (!article || !tocList) return;
+
+    const headings = article.querySelectorAll('h2, h3');
+    if (headings.length < 2) {
+      // 少于两个标题时不显示目录
+      tocSidebar?.classList.add('toc-hidden');
+      return;
+    }
+
+    // 给每个标题加 id
+    headings.forEach((h, i) => {
+      if (!h.id) {
+        h.id = `heading-${i}`;
+      }
+    });
+
+    // 构建目录树
+    const stack: HTMLLIElement[] = [];
+    headings.forEach((h) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `#${h.id}`;
+      a.textContent = h.textContent ?? '';
+      a.className = h.tagName === 'H3' ? 'toc-link toc-h3' : 'toc-link toc-h2';
+
+      // 点击平滑滚动
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(h.id);
+        if (target) {
+          const top = target.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: 'smooth' });
+          history.replaceState(null, '', `#${h.id}`);
+        }
+      });
+
+      li.appendChild(a);
+
+      if (h.tagName === 'H3' && stack.length > 0) {
+        // H3 作为子标题，放入上一个 H2 的嵌套列表
+        let parent = stack[stack.length - 1];
+        let subUl = parent.querySelector('ul');
+        if (!subUl) {
+          subUl = document.createElement('ul');
+          subUl.className = 'toc-sub';
+          parent.appendChild(subUl);
+        }
+        subUl.appendChild(li);
+      } else {
+        tocList.appendChild(li);
+        if (h.tagName === 'H2') {
+          stack.length = 0;
+          stack.push(li);
+        }
+      }
+    });
+
+    // IntersectionObserver 追踪当前可见标题
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = entry.target.id;
+          const link = tocList.querySelector(`a[href="#${id}"]`);
+          if (link) {
+            link.classList.toggle('toc-active', entry.isIntersecting);
+          }
+        });
+      },
+      { rootMargin: '-80px 0px -70% 0px', threshold: 0 }
+    );
+
+    headings.forEach((h) => observer.observe(h));
+  }
+
+  // 页面加载完成后构建
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildTOC);
+  } else {
+    buildTOC();
+  }
+</script>

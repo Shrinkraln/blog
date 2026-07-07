@@ -13,13 +13,14 @@ export interface Source {
   dir: string;
   category: string;
   slug: string;
+  subCategory?: string; // 若设置，散篇文章会归入此命名的虚拟系列（如 STM32F103C8T6）
   repoRoot: string;
 }
 
 export const SOURCES: Source[] = [
   { dir: 'external/ros2_learning/log', category: 'ROS2', slug: 'ros2', repoRoot: 'external/ros2_learning' },
   { dir: 'external/python_learning/logs', category: 'Python', slug: 'python', repoRoot: 'external/python_learning' },
-  { dir: 'src/content/blog/stm32f103c8t6', category: 'STM32', slug: 'stm32', repoRoot: '.' },
+  { dir: 'src/content/blog/stm32f103c8t6', category: 'STM32', slug: 'stm32', subCategory: 'STM32F103C8T6', repoRoot: '.' },
   { dir: 'src/content/blog/misc', category: '杂记', slug: 'misc', repoRoot: '.' },
 ];
 
@@ -136,6 +137,11 @@ export async function getGrouped(): Promise<CategoryGroup[]> {
         const arr = seriesMap.get(n.series) ?? [];
         arr.push(n);
         seriesMap.set(n.series, arr);
+      } else if (src.subCategory) {
+        // 散篇文章归入虚拟系列（子栏目）
+        const arr = seriesMap.get(src.subCategory) ?? [];
+        arr.push(n);
+        seriesMap.set(src.subCategory, arr);
       } else {
         loose.push(n);
       }

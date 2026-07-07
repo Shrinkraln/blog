@@ -13,12 +13,18 @@ const groups = await getGrouped();
 
     {
       groups.map((group) => (
-        <section class="cat-block" id={group.slug}>
-          <h2>{group.category}</h2>
+        <details class="cat-block cat-collapse" id={group.slug} open>
+          <summary class="cat-summary">
+            <h2>{group.category}</h2>
+            <span class="cat-toggle-icon"></span>
+          </summary>
 
           {group.series.map((s) => (
-            <div class="series-group">
-              <h3>📚 {s.name}</h3>
+            <details class="series-group series-collapse" open>
+              <summary class="series-summary">
+                📚 {s.name}
+                <span class="series-count">({s.notes.length} 篇)</span>
+              </summary>
               <ol class="series-list">
                 {s.notes.map((n) => (
                   <li>
@@ -31,7 +37,7 @@ const groups = await getGrouped();
                   </li>
                 ))}
               </ol>
-            </div>
+            </details>
           ))}
 
           {group.loose.length > 0 && (
@@ -52,8 +58,22 @@ const groups = await getGrouped();
               ))}
             </ul>
           )}
-        </section>
+        </details>
       ))
     }
   </section>
 </BaseLayout>
+
+<script>
+  // 展开/折叠时更新图标状态
+  document.querySelectorAll('.cat-collapse').forEach((el) => {
+    el.addEventListener('toggle', () => {
+      el.classList.toggle('cat-open', (el as HTMLDetailsElement).open);
+    });
+  });
+  document.querySelectorAll('.series-collapse').forEach((el) => {
+    el.addEventListener('toggle', () => {
+      el.classList.toggle('series-open', (el as HTMLDetailsElement).open);
+    });
+  });
+</script>

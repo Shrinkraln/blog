@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import TOC from '../../components/TOC.astro';
 import { getNotes, getSeriesSiblings } from '../../lib/notes';
 import { url as siteUrl } from '../../consts';
 
@@ -23,51 +24,55 @@ const next = idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
 ---
 
 <BaseLayout title={note.title} description={note.description ?? note.title}>
-  <article class="prose container">
-    <a class="back-link" href={siteUrl('/blog')}>← 返回文章目录</a>
-    <p class="post-meta" style="margin-top:10px">
-      <span class="tag">{note.category}</span>
-      {note.series && <span class="tag">系列 · {note.series}</span>}
-      {note.date && <FormattedDate date={note.date} />}
-      {note.tags.map((t) => <span class="tag">#{t}</span>)}
-    </p>
+  <div class="article-wrapper">
+    <article class="prose">
+      <a class="back-link" href={siteUrl('/blog')}>← 返回文章目录</a>
+      <p class="post-meta" style="margin-top:10px">
+        <span class="tag">{note.category}</span>
+        {note.series && <span class="tag">系列 · {note.series}</span>}
+        {note.date && <FormattedDate date={note.date} />}
+        {note.tags.map((t) => <span class="tag">#{t}</span>)}
+      </p>
 
-    {
-      note.series && siblings.length > 1 && (
-        <details class="series-box">
-          <summary>本系列共 {siblings.length} 篇</summary>
-          <ol>
-            {siblings.map((n) => (
-              <li>
-                {n.slug === note.slug ? (
-                  <strong>{n.title}（当前）</strong>
-                ) : (
-                  <a href={siteUrl(`/blog/${n.slug}/`)}>{n.title}</a>
-                )}
-              </li>
-            ))}
-          </ol>
-        </details>
-      )
-    }
+      {
+        note.series && siblings.length > 1 && (
+          <details class="series-box">
+            <summary>本系列共 {siblings.length} 篇</summary>
+            <ol>
+              {siblings.map((n) => (
+                <li>
+                  {n.slug === note.slug ? (
+                    <strong>{n.title}（当前）</strong>
+                  ) : (
+                    <a href={siteUrl(`/blog/${n.slug}/`)}>{n.title}</a>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </details>
+        )
+      }
 
-    <Content />
+      <Content />
 
-    {
-      (prev || next) && (
-        <nav class="series-nav">
-          {prev ? (
-            <a href={siteUrl(`/blog/${prev.slug}/`)}>← {prev.title}</a>
-          ) : (
-            <span />
-          )}
-          {next ? (
-            <a href={siteUrl(`/blog/${next.slug}/`)}>{next.title} →</a>
-          ) : (
-            <span />
-          )}
-        </nav>
-      )
-    }
-  </article>
+      {
+        (prev || next) && (
+          <nav class="series-nav">
+            {prev ? (
+              <a href={siteUrl(`/blog/${prev.slug}/`)}>← {prev.title}</a>
+            ) : (
+              <span />
+            )}
+            {next ? (
+              <a href={siteUrl(`/blog/${next.slug}/`)}>{next.title} →</a>
+            ) : (
+              <span />
+            )}
+          </nav>
+        )
+      }
+    </article>
+
+    <TOC />
+  </div>
 </BaseLayout>
