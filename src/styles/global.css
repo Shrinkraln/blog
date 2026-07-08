@@ -17,6 +17,11 @@
     --border: #21262d;
     --code-bg: #161b22;
   }
+
+  .prose,
+  .toc-sidebar {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
 }
 
 * {
@@ -48,20 +53,22 @@ body {
   padding-inline: 20px;
 }
 
-/* ── 文章页双栏布局 ── */
+/* ── 文章页双栏布局（TOC 左侧 + 文章居中）── */
 .article-wrapper {
   display: grid;
-  grid-template-columns: 1fr 210px;
-  gap: 36px;
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 0 20px;
+  grid-template-columns: 230px minmax(0, 780px);
+  gap: 32px;
+  max-width: 1080px;
+  margin: 32px auto;
+  padding: 0 24px;
   align-items: start;
+  justify-content: center;
 }
 
 @media (max-width: 1023px) {
   .article-wrapper {
     grid-template-columns: 1fr;
+    margin: 20px auto;
   }
 }
 
@@ -179,9 +186,20 @@ a:hover {
   color: var(--muted);
 }
 
-/* Article */
+/* Article — 卡片样式 */
 .prose {
-  padding-block: 32px;
+  padding: 36px 40px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 6px 20px rgba(0, 0, 0, 0.07);
+}
+
+@media (max-width: 640px) {
+  .prose {
+    padding: 24px 20px;
+    border-radius: 10px;
+  }
 }
 .prose h1 {
   font-size: 2rem;
@@ -339,14 +357,18 @@ a:hover {
   font-size: 0.8rem;
 }
 
-/* ── TOC 侧栏 ── */
+/* ── TOC 侧栏（左侧卡片）── */
 .toc-sidebar {
   position: sticky;
   top: 78px;
   max-height: calc(100vh - 110px);
   overflow-y: auto;
-  padding-block: 34px;
+  padding: 20px 18px;
   font-size: 0.85rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 6px 20px rgba(0, 0, 0, 0.07);
 }
 .toc-hidden {
   display: none;
@@ -383,9 +405,22 @@ a:hover {
   border-left-color: var(--accent);
   font-weight: 600;
 }
+.toc-link.toc-h1 {
+  padding-left: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--fg);
+}
+.toc-link.toc-h2 {
+  padding-left: 10px;
+}
 .toc-link.toc-h3 {
   padding-left: 22px;
   font-size: 0.82rem;
+}
+.toc-link.toc-h4 {
+  padding-left: 34px;
+  font-size: 0.78rem;
 }
 .toc-sub {
   list-style: none;

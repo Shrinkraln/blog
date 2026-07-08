@@ -13,7 +13,7 @@
     const tocList = document.getElementById('toc-list');
     if (!article || !tocList) return;
 
-    const headings = article.querySelectorAll('h2, h3');
+    const headings = article.querySelectorAll('h1, h2, h3, h4');
     if (headings.length < 2) {
       // 少于两个标题时不显示目录
       tocSidebar?.classList.add('toc-hidden');
@@ -27,14 +27,15 @@
       }
     });
 
-    // 构建目录树
+    // 构建目录树：通用层级嵌套
     const stack: HTMLLIElement[] = [];
     headings.forEach((h) => {
+      const level = parseInt(h.tagName.charAt(1)); // 1~4
       const li = document.createElement('li');
       const a = document.createElement('a');
       a.href = `#${h.id}`;
       a.textContent = h.textContent ?? '';
-      a.className = h.tagName === 'H3' ? 'toc-link toc-h3' : 'toc-link toc-h2';
+      a.className = `toc-link toc-h${level}`;
 
       // 点击平滑滚动
       a.addEventListener('click', (e) => {
@@ -49,9 +50,21 @@
 
       li.appendChild(a);
 
-      if (h.tagName === 'H3' && stack.length > 0) {
-        // H3 作为子标题，放入上一个 H2 的嵌套列表
-        let parent = stack[stack.length - 1];
+      // 弹出栈中层级 >= 当前层级的项，找到正确的父级
+      while (stack.length > 0) {
+        const topLevel = parseInt(
+          (stack[stack.length - 1] as HTMLElement).dataset.level ?? '0'
+        );
+        if (topLevel < level) break;
+        stack.pop();
+      }
+
+      if (stack.length === 0) {
+        // 顶层，直接追加到根列表
+        tocList.appendChild(li);
+      } else {
+        // 作为子级，放入栈顶元素的嵌套列表
+        const parent = stack[stack.length - 1];
         let subUl = parent.querySelector('ul');
         if (!subUl) {
           subUl = document.createElement('ul');
@@ -59,13 +72,10 @@
           parent.appendChild(subUl);
         }
         subUl.appendChild(li);
-      } else {
-        tocList.appendChild(li);
-        if (h.tagName === 'H2') {
-          stack.length = 0;
-          stack.push(li);
-        }
       }
+
+      (li as HTMLElement).dataset.level = String(level);
+      stack.push(li);
     });
 
     // IntersectionObserver 追踪当前可见标题

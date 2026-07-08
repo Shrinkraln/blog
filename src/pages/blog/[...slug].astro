@@ -25,6 +25,8 @@ const next = idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
 
 <BaseLayout title={note.title} description={note.description ?? note.title}>
   <div class="article-wrapper">
+    <TOC />
+
     <article class="prose">
       <a class="back-link" href={siteUrl('/blog')}>← 返回文章目录</a>
       <p class="post-meta" style="margin-top:10px">
@@ -72,7 +74,5 @@ const next = idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
         )
       }
     </article>
-
-    <TOC />
   </div>
 </BaseLayout>
