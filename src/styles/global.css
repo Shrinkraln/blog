@@ -53,16 +53,15 @@ body {
   padding-inline: 20px;
 }
 
-/* ── 文章页双栏布局（TOC 左侧 + 文章居中）── */
+/* ── 文章页双栏布局（TOC 左侧 + 文章左偏宽栏）── */
 .article-wrapper {
   display: grid;
-  grid-template-columns: 230px minmax(0, 780px);
-  gap: 32px;
-  max-width: 1080px;
-  margin: 32px auto;
+  grid-template-columns: 200px minmax(0, 840px);
+  gap: 28px;
+  max-width: 1100px;
+  margin: 32px auto 32px max(24px, 8%);
   padding: 0 24px;
   align-items: start;
-  justify-content: center;
 }
 
 @media (max-width: 1023px) {
